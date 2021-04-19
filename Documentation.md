@@ -1,5 +1,5 @@
+Sono
 
-#Sono
 
 ° This bot is used to play a sound from YouTube when a specific user joins în a voice channel.
 ° 
