@@ -10,3 +10,5 @@ Sono
 ¶ s!reset - is used to remove all users from the list. (aliases: r)
 ¶ s!clear amount - is an aditional command made for clearing the chat. (aliases: c) 
 ¶ s!list - show the list of the user wich will get a sound on join. 
+
+ For sugestions on how should i improve the bot, dm me on discord. I am Lauru#9407. 
