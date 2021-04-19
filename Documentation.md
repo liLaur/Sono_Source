@@ -1,7 +1,7 @@
 Sono
 
 
-° This bot is used to play a sound from YouTube when a specific user joins în a voice channel.
+° This bot plays a sound from YouTube when a specific user joins in a voice channel.
 ° Please do not use sounds wich are longer than 10 seconds because it won't play more than 10 seconds. 
 
  Commands
