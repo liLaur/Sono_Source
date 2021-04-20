@@ -10,20 +10,20 @@ client = commands.Bot(command_prefix=prefix)
 users = []
 urls = []
 
-if os.path.isfile('Saves/users.txt'):
-		with open('Saves/users.txt', 'r') as f:
-			tempus = f.read()
-			tempus = tempus.split(',')
-			users = [x for x in tempus if x.strip()]
+# if os.path.isfile('Saves/users.txt'):
+# 		with open('Saves/users.txt', 'r') as f:
+# 			tempus = f.read()
+# 			tempus = tempus.split(',')
+# 			users = [x for x in tempus if x.strip()]
 
-if os.path.isfile('Saves/urls.txt'):
-		with open('Saves/urls.txt', 'r') as f:
-			tempur = f.read()
-			tempur = tempur.split(',')
-			urls = [x for x in tempur if x.strip()]
+# if os.path.isfile('Saves/urls.txt'):
+# 		with open('Saves/urls.txt', 'r') as f:
+# 			tempur = f.read()
+# 			tempur = tempur.split(',')
+# 			urls = [x for x in tempur if x.strip()]
 
-print (users)
-print (urls)
+# print (users)
+# print (urls)
 
 #====Evenimente====
 @client.event #ready============
@@ -39,9 +39,36 @@ async def on_guild_join(guild):
     # for guild in client.guilds:
     await guild.system_channel.send("Hello there! I am Sono, I am here to notify you when a new member joins in a voice channel. To see available commands type in '{p}cmd'. Careful maximum lenght is 10 seconds.".format(p=prefix))
 
+    with open('Saves/{g}_users.txt'.format(g=guild), 'w') as f:
+        for x in users:
+            f.write(x + ',')
+    
+    with open('Saves/{g}_urls.txt'.format(g=guild), 'w') as f:
+        for x in urls:
+            f.write(x + ',')
+
+
 @client.event #user join============
 async def on_voice_state_update(member : discord.Member, before, after):
+    global users, urls
     if before.channel is None and after.channel is not None:
+
+        sv = member.guild
+        if os.path.isfile('Saves/{g}_users.txt'.format(g=sv)):
+        		with open('Saves/{g}_users.txt'.format(g=sv), 'r') as f:
+        			tempus = f.read()
+        			tempus = tempus.split(',')
+        			users = [x for x in tempus if x.strip()]
+
+        if os.path.isfile('Saves/{g}_urls.txt'.format(g=sv)):
+        		with open('Saves/{g}_urls.txt'.format(g=sv), 'r') as f:
+        			tempur = f.read()
+        			tempur = tempur.split(',')
+        			urls = [x for x in tempur if x.strip()]
+
+        print (users)
+        print (urls)
+
         for idx, u in enumerate(users):
             if str(member) == u:
                 #====Play mp3====
@@ -52,15 +79,13 @@ async def on_voice_state_update(member : discord.Member, before, after):
                 video = new(urls[int(idx)])
                 audio = video.getbestaudio().url
                 voice.play(discord.FFmpegPCMAudio(audio), after=None)
-                await asyncio.sleep(15)
+
+                duration = video.duration
+                await asyncio.sleep(float(duration.replace(':', '')))
                 await voice.disconnect()
 #====Evenimente====
 
 #====Comenzi====
-@client.command(aliases = ["salut", "Sal", "SALL", "sall"])
-async def sal(ctx):
-    await ctx.send("Salut")
-
 @client.command(aliases = ["a"]) #add user============
 async def add(ctx, user : discord.Member, url):
     users.append(str(user))
@@ -68,11 +93,13 @@ async def add(ctx, user : discord.Member, url):
 
     await ctx.send("Now when {us} enter a voice channel will play {ur}".format(us=user, ur=url))
 
-    with open('Saves/users.txt', 'w') as f:
+    sv = ctx.guild
+
+    with open('Saves/{g}_users.txt.'.format(g=sv), 'w') as f:
         for x in users:
             f.write(x + ',')
     
-    with open('Saves/urls.txt', 'w') as f:
+    with open('Saves/{g}_urls.txt'.format(g=sv), 'w') as f:
         for x in urls:
             f.write(x + ',')
 
@@ -85,11 +112,13 @@ async def delete(ctx, user : discord.Member):
 
     await ctx.send("{us} has been removed from the list".format(us=user))
     
-    with open('Saves/users.txt', 'w') as f:
+    sv = ctx.guild
+
+    with open('Saves/{g}_users.txt.'.format(g=sv), 'w') as f:
         for x in users:
             f.write(x + ',')
     
-    with open('Saves/urls.txt', 'w') as f:
+    with open('Saves/{g}_urls.txt'.format(g=sv), 'w') as f:
         for x in urls:
             f.write(x + ',')
 
@@ -99,16 +128,33 @@ async def reset(ctx):
     urls = []
     await ctx.send("There is nobody on the list anymore")
 
-    with open('Saves/users.txt', 'w') as f:
-        for x in users:
-            f.write(x + ',')
+    sv = ctx.guild
+
+    with open('Saves/{g}_users.txt.'.format(g=sv), 'w') as f:
+        f.write("")
     
-    with open('Saves/urls.txt', 'w') as f:
-        for x in urls:
-            f.write(x + ',')
+    with open('Saves/{g}_urls.txt'.format(g=sv), 'w') as f:
+        f.write("")
 
 @client.command()
 async def list(ctx):
+
+    sv = ctx.guild
+    if os.path.isfile('Saves/{g}_users.txt'.format(g=sv)):
+    		with open('Saves/{g}_users.txt'.format(g=sv), 'r') as f:
+    			tempus = f.read()
+    			tempus = tempus.split(',')
+    			users = [x for x in tempus if x.strip()]
+
+    if os.path.isfile('Saves/{g}_urls.txt'.format(g=sv)):
+    		with open('Saves/{g}_urls.txt'.format(g=sv), 'r') as f:
+    			tempur = f.read()
+    			tempur = tempur.split(',')
+    			urls = [x for x in tempur if x.strip()]
+
+    print (users)
+    print (urls)
+
     if users != []:
         st = ""
         for idx, u in enumerate(users):
@@ -120,7 +166,7 @@ async def list(ctx):
     else:
         await ctx.send("There are no users")
 
-@client.command()
+@client.command(aliases = ["c"])
 async def clear(ctx, nr = 2):
     await ctx.channel.purge(limit = nr)
 
