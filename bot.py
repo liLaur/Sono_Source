@@ -130,4 +130,4 @@ async def cmd(ctx):
 
 #====Comenzi====
 
-client.run("ODMzNTU5NzkyMTA1NTUzOTIw.YH0HDQ.6_d2a0wtX3zMyCKeB6Rnfw1OOvk")
+client.run(TOKEN)
